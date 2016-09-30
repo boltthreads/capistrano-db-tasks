@@ -183,11 +183,6 @@ module Database
       self
     end
 
-    def upload
-      remote_file = "#{@cap.current_path}/#{output_file}"
-      @cap.upload! output_file, remote_file
-    end
-
     private
 
     def execute(cmd)
@@ -217,17 +212,6 @@ module Database
         remote_db.clean_dump_if_needed
       end
       local_db.load(remote_db.output_file, instance.fetch(:db_local_clean))
-    end
-
-    def local_to_remote(instance)
-      local_db  = Database::Local.new(instance)
-      remote_db = Database::Remote.new(instance)
-
-      check(local_db, remote_db)
-
-      local_db.dump.upload
-      remote_db.load(local_db.output_file, instance.fetch(:db_local_clean))
-      File.unlink(local_db.output_file) if instance.fetch(:db_local_clean)
     end
   end
 end
